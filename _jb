@@ -1,0 +1,44 @@
+#compdef jb
+
+DIRNAME="$(dirname "$0")"
+
+typeset -A opt_args
+
+_arguments -C \
+  '1:cmds:->cmds' \
+  '*:: :->args' \
+&& ret=0
+
+case "$state" in
+  (cmds)
+     local commands; commands=(
+      'help:Show help'
+      'init:Initialize a new empty jsonnetfile'
+      'install:Install dependencies'
+      'update:Update all or specific dependencies'
+      'rewrite:Automatically rewrite legacy imports to absolute ones'
+
+      '--help:Show context-sensitive help'
+      '--help-long:Show extended help'
+      '--help-man:Show manpages'
+      '--version:Show application version'
+      '--jsonnetpkg-home="vendor":The directory used to cache packages in'
+      '--quiet:Suppress any output from git command'
+     )
+
+      _describe -t commands 'command' commands && ret=0
+  ;;
+  (args)
+    case $line[1] in
+      (install)
+        echo ${0:a}
+        _arguments "1: :($($DIRNAME/install.sh))"
+      ;;
+      (update)
+        _arguments "1: :($($DIRNAME/updates.sh))"
+      ;;
+    esac
+  ;;
+esac
+
+return 1;
