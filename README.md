@@ -5,3 +5,19 @@ This is a zsh-completion definition (compdef) for [jsonnet-bundler](https://gith
 `jb update` completion works out of the box, it'll look for entries in the `jsonnetfile.lock.json` file in the current directory.
 
 `jb install` does not work out of the box, it expects an index.jsonnet file with an array of `jsonnetfile.json` imports. I currently render this with `update-index.sh`, which finds all `jsonnetfile.json` in `~/git` for me to construct a nice index.
+
+## install
+
+Symlink the compdef:
+
+```
+ln -sfn $PWD/_jb ~/.zsh/zsh-completions
+```
+
+Update `fpath` and load `compinit`:
+
+```
+fpath=($HOME/.zsh-completions $fpath)
+autoload -U compinit
+compinit
+```
