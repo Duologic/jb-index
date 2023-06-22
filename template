@@ -1,8 +1,27 @@
 #compdef jb
 
-DIRNAME="$(dirname "$0")"
-
 typeset -A opt_args
+
+install_args=(
+{{install_args}}
+)
+
+update_args() {
+    [ -f jsonnetfile.lock.json ] && \
+    jsonnet \
+        --tla-code jsonnetfile='import "./jsonnetfile.lock.json"' \
+        -S \
+        -e "function(jsonnetfile)
+              local urls = std.sort([
+                '%s/%s' % [
+                  d.source.git.remote,
+                  d.source.git.subdir,
+                ]
+                for d in jsonnetfile.dependencies
+                if 'git' in d.source
+              ]);
+              std.join('\\n', urls)"
+}
 
 _arguments -C \
   '1:cmds:->cmds' \
@@ -31,11 +50,10 @@ case "$state" in
   (args)
     case $line[1] in
       (install)
-        echo ${0:a}
-        _arguments "1: :($($DIRNAME/install.sh))"
+        _arguments "1: :($install_args)"
       ;;
       (update)
-        _arguments "1: :($($DIRNAME/updates.sh))"
+        _arguments "1: :($(update_args))"
       ;;
     esac
   ;;
